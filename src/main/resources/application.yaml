@@ -5,9 +5,10 @@ spring:
     jdbc:
       table-prefix: GCP_         # Spring Batch에서 사용할 테이블 접두사
       initialize-schema: always  # 또는 운영에서는 never/embedded로 설정
+      schema: classpath:custom-schema-mysql.sql
   datasource:
-    service:
-      pool-name: service-db
+    main:
+      pool-name: main-db
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://localhost:3306/MAIN?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
       username: root

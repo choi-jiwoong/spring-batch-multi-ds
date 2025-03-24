@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @Primary
-public class ServiceDataSourceConfig {
+public class MainDataSourceConfig {
 
 	@Primary
 	@Bean(name = "dataSource")
-	@ConfigurationProperties(prefix = "spring.datasource.service")
-	public DataSource serviceDataSource() {
+	@ConfigurationProperties(prefix = "spring.datasource.main")
+	public DataSource mainDataSource() {
 		return DataSourceBuilder.create().build();
 	}
 
 	@Primary
 	@Bean(name = "transactionManager")
-	public PlatformTransactionManager serviceTransactionManager(
+	public PlatformTransactionManager mainTransactionManager(
 		@Qualifier("dataSource") DataSource dataSource) {
 		return new DataSourceTransactionManager(dataSource);
 	}
