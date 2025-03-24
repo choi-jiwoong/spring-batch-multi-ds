@@ -1,6 +1,8 @@
 package com.sea4.batchtest.user.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class LoginHistoryEntity {
 
 	@Id
@@ -33,4 +37,5 @@ public class LoginHistoryEntity {
 
 	@Column(nullable = false)
 	private boolean success;  // 로그인 성공 여부 (true / false)
+
 }

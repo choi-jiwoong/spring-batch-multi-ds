@@ -4,12 +4,15 @@ import com.sea4.batchtest.user.model.LoginHistoryEntity;
 import com.sea4.batchtest.user.repository.LoginHistoryRepository;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LoginService {
@@ -38,6 +41,8 @@ public class LoginService {
 
 
 	public void flushBuffer(Chunk<? extends LoginHistoryEntity> chunk) {
+
+		log.info("flushBuffer");
 
 		for (LoginHistoryEntity logData : chunk) {
 			loginHistoryRepository.save(logData);

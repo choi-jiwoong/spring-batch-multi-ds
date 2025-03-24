@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +18,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserEntity {
 
 	@Id
@@ -43,4 +47,18 @@ public class UserEntity {
 	public void setUpdatedAt() {
 		this.updatedAt = LocalDateTime.now();
 	}
+
+	@Builder
+	public static  UserEntity createUser(String username, String password, String email) {
+		return new UserEntity(username, password, email);  // 생성자 호출
+	}
+
+	public UserEntity(String username, String password, String email) {
+		this.username = username;
+		this.password = password;
+		this.email = email;
+		this.role = "USER";
+	}
+
+
 }

@@ -1,60 +1,39 @@
 package com.sea4.batchtest.config;
 
-
-import com.sea4.batchtest.user.model.LoginHistoryEntity;
-import com.sea4.batchtest.user.service.LoginService;
+import javax.sql.DataSource;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.TaskExecutorJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-@Slf4j
 public class BatchConfig {
 
-	private final LoginService loginService;
-
-	private final JobRepository jobRepository;
-
-	private final PlatformTransactionManager platformTransactionManager;
-
 	@Bean
-	public Job searchResultLogJob() {
-		return new JobBuilder("searchResultLogJob", jobRepository)
-			.start(searchResultLogStep())
-			.build();
+	public JobRepository jobRepository(
+		@Qualifier("batchDataSource") DataSource dataSource,
+		@Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager) throws Exception {
+
+		JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+		factory.setDataSource(dataSource);
+		factory.setTransactionManager(transactionManager);
+		factory.afterPropertiesSet();
+		return factory.getObject();
 	}
 
 	@Bean
-	public Step searchResultLogStep() {
-		return new StepBuilder("searchResultLogStep", jobRepository)
-			.<LoginHistoryEntity, LoginHistoryEntity>chunk(10, platformTransactionManager)  // 100건씩 BigQuery로 저장
-			.reader(searchResultLogReader())
-			.writer(searchResultLogWriter())
-			.build();
-	}
-
-	@Bean
-	public ItemReader<LoginHistoryEntity> searchResultLogReader() {
-		return loginService.getReader();
-	}
-
-	@Bean
-	public ItemWriter<LoginHistoryEntity> searchResultLogWriter() {
-
-		return logs -> {
-			log.info("logs size: {}", logs.size());
-			loginService.flushBuffer(logs);
-		};
+	public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
+		jobLauncher.setJobRepository(jobRepository);
+		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
+		jobLauncher.afterPropertiesSet();
+		return jobLauncher;
 	}
 }
