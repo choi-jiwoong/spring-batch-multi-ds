@@ -16,6 +16,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.support.ListItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,19 +29,18 @@ public class BatchLoginConfig {
 
 	private final LoginService loginService;
 
-	private final JobRepository jobRepository;
 
 	private final PlatformTransactionManager platformTransactionManager;
 
 	@Bean
-	public Job loginHistoryResultLogJob() {
+	public Job loginHistoryResultLogJob(@Qualifier("batchJobRepository") JobRepository jobRepository) {
 		return new JobBuilder("loginHistoryResultLogJob", jobRepository)
-			.start(loginHistoryResultLogStep())
+			.start(loginHistoryResultLogStep(jobRepository))
 			.build();
 	}
 
 	@Bean
-	public Step loginHistoryResultLogStep() {
+	public Step loginHistoryResultLogStep(@Qualifier("batchJobRepository") JobRepository jobRepository) {
 		return new StepBuilder("loginHistoryResultLogStep", jobRepository)
 			.<LoginHistoryEntity, LoginHistoryEntity>chunk(10, platformTransactionManager)  // 10건씩 BigQuery로 저장
 			.reader(loginHistoryEntityItemReader())

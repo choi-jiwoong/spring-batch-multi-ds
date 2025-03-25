@@ -21,20 +21,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 public class BatchDataSourceConfig  {
 
-	@Bean(name = "batchDataSource")
+	@Bean
 	@ConfigurationProperties("spring.batch.datasource")
 	public DataSource batchDataSource() {
 		return DataSourceBuilder.create().build();
 	}
 
-	@Bean(name = "batchTransactionManager")
+	@Bean
 	public PlatformTransactionManager batchTransactionManager(
 		@Qualifier("batchDataSource") DataSource dataSource) {
 		return new DataSourceTransactionManager(dataSource);
 	}
 
 	@Bean
-	public JobRepository jobRepository(
+	public JobRepository batchJobRepository(
 		@Qualifier("batchDataSource") DataSource dataSource,
 		@Qualifier("batchTransactionManager") PlatformTransactionManager transactionManager) throws Exception {
 
@@ -46,7 +46,7 @@ public class BatchDataSourceConfig  {
 	}
 
 	@Bean
-	public JobLauncher jobLauncher(JobRepository jobRepository) throws Exception {
+	public JobLauncher jobLauncher(@Qualifier("batchJobRepository") JobRepository jobRepository) throws Exception {
 		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);
 		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
