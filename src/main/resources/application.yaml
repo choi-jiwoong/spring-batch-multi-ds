@@ -1,27 +1,27 @@
 server:
   port: 8080
+
 spring:
   batch:
-    jdbc:
-      table-prefix: GCP_         # Spring Batch에서 사용할 테이블 접두사
-      initialize-schema: always  # 또는 운영에서는 never/embedded로 설정
-      schema: classpath:custom-schema-mysql.sql
-  datasource:
-    main:
-      pool-name: main-db
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://localhost:3306/MAIN?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
-      username: root
-      password: rootpassword
-    batch:
-      pool-name: batch-db
+    datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
       jdbc-url: jdbc:mysql://localhost:3306/BATCH?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
       username: root
       password: rootpassword
+      hikari:
+        maximum-pool-size: 1
+        minimum-idle: 1
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jdbc-url: jdbc:mysql://localhost:3306/MAIN?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
+    username: root
+    password: rootpassword
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 2
   jpa:
     hibernate:
-      ddl-auto: update   # 엔티티 기반 테이블은 MAIN DB에 생성됨
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
