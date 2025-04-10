@@ -46,7 +46,7 @@ public class BatchDataSourceConfig  {
 	}
 
 	@Bean
-	public JobLauncher jobLauncher(@Qualifier("batchJobRepository") JobRepository jobRepository) throws Exception {
+	public JobLauncher batchJobLauncher(@Qualifier("batchJobRepository") JobRepository jobRepository) throws Exception {
 		TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
 		jobLauncher.setJobRepository(jobRepository);
 		jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
