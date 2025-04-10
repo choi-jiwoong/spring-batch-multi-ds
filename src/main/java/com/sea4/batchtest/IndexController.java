@@ -27,7 +27,7 @@ public class IndexController {
 
 	private final JobLauncher jobLauncher;
 
-	private final Job  loginHistoryResultLogJob;
+	private final Job loginHistoryResultLogJob;
 
 	@GetMapping("/")
 	public String index() {
