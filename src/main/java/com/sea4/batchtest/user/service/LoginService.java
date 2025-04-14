@@ -7,6 +7,8 @@ import com.sea4.batchtest.user.repository.UserEntityRepository;
 import jakarta.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
@@ -24,7 +26,7 @@ public class LoginService {
 	private final UserEntityRepository userEntityRepository;
 	private final LoginHistoryRepository loginHistoryRepository;
 
-	private final List<LoginHistoryEntity> buffer = new ArrayList<>();
+	private final Queue<LoginHistoryEntity> buffer = new ConcurrentLinkedQueue<>();
 
 	/**
 	 * 외부에서 로그를 추가하는 메서드.

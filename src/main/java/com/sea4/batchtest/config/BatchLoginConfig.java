@@ -64,15 +64,16 @@ public class BatchLoginConfig {
 			.<LoginHistoryEntity, Future<LoginHistoryEntity>>chunk(10, platformTransactionManager)  // 10건씩 저장
 			.reader(loginHistoryEntityItemReader())
 			.writer(loginHistoryEntityItemAsyncWriter())
+			.taskExecutor(loginHistoryTaskExecutor())
 			.build();
 	}
 
 	@Bean
 	public TaskExecutor loginHistoryTaskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(4);
-		executor.setMaxPoolSize(8);
-		executor.setQueueCapacity(100);
+		executor.setCorePoolSize(1);
+		executor.setMaxPoolSize(2);
+		executor.setQueueCapacity(10);
 		executor.setThreadNamePrefix("login-history-result-log-");
 		executor.initialize();
 		return executor;
